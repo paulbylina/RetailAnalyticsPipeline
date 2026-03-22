@@ -53,3 +53,18 @@ Aggregate cleaned data
         ↓
 Write business summary to data/processed/order_summary.json
 ```
+
+## Current Pipeline Versions
+
+### V1 Prototype Pipeline
+- Generates simple raw order events
+- Transforms records into a cleaned processed layer
+- Validates order data
+- Produces a basic order summary
+
+### V2 Retail Analytics Pipeline
+- Generates richer retail order events with category, region, payment method, and order status
+- Transforms raw retail orders into a cleaned analytics-ready dataset
+- Validates business rules and field consistency
+- Produces revenue and order summaries by category, status, and region
+- Runs end-to-end through `src/run_retail_pipeline.py`
