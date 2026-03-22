@@ -16,7 +16,8 @@ Build a practical data engineering project that demonstrates:
 - Stores raw and processed data in separate pipeline layers
 
 ## Project Structure
-```text
+
+```
 RetailAnalyticsPipeline/
 ├── data/
 │   ├── raw/
@@ -31,3 +32,24 @@ RetailAnalyticsPipeline/
 ├── tests/
 ├── README.md
 └── requirements.txt
+```
+
+## Pipeline Flow
+
+```
+Generate Raw Orders
+        ↓
+Write raw events to data/raw/orders.jsonl
+        ↓
+Transform raw orders
+        ↓
+Write cleaned data to data/processed/orders_clean.jsonl
+        ↓
+Validate cleaned data
+        ↓
+Count/flag bad records
+        ↓
+Aggregate cleaned data
+        ↓
+Write business summary to data/processed/order_summary.json
+```
