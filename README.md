@@ -1,6 +1,6 @@
-# RetailAnalyticsPipeline
+# Retail Analytics Pipeline
 
-A portfolio project that simulates a client-ready retail analytics data pipeline for batch-style ingestion, transformation, and downstream analytics use cases.
+A project that simulates a client-ready retail analytics data pipeline for batch-style ingestion, transformation, and downstream analytics use cases.
 
 ## Project Goal
 Build a practical data engineering project that demonstrates:
