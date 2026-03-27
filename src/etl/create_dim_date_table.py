@@ -13,12 +13,12 @@ def main():
     conn.execute("""
         CREATE TABLE dim_date AS
         SELECT DISTINCT
-            CAST(STRFTIME(order_date, '%Y%m%d') AS BIGINT) AS date_key,
+            CAST(STRFTIME(order_date, '%Y%m%d') AS INTEGER) AS date_key,
             order_date AS full_date,
-            EXTRACT(YEAR FROM order_date) AS year,
-            EXTRACT(MONTH FROM order_date) AS month,
+            CAST(EXTRACT(YEAR FROM order_date) AS SMALLINT) AS year,
+            CAST(EXTRACT(MONTH FROM order_date) AS SMALLINT) AS month,
+            CAST(EXTRACT(DAY FROM order_date) AS SMALLINT) AS day,
             STRFTIME(order_date, '%B') AS month_name,
-            EXTRACT(DAY FROM order_date) AS day,
             STRFTIME(order_date, '%A') AS weekday_name,
             CASE
                 WHEN STRFTIME(order_date, '%w') IN ('0', '6') THEN TRUE
