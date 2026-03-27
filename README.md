@@ -19,17 +19,47 @@ Build a practical data engineering project that demonstrates:
 
 ```
 RetailAnalyticsPipeline/
-├── data/
-│   ├── raw/
-│   └── processed/
-├── src/
-│   ├── ingestion/
-│   ├── etl/
-│   ├── models/
-│   └── api/
-├── notebooks/
-├── infra/
-├── tests/
+├── data
+│   ├── processed
+│   │   ├── retail_kpis.csv
+│   │   ├── retail_orders_clean.jsonl
+│   │   └── retail_order_summary.json
+│   ├── raw
+│   │   └── retail_orders.jsonl
+│   └── warehouse
+│       └── retail.duckdb
+├── sql
+│   ├── analytics
+│   │   ├── daily_revenue_trend.sql
+│   │   ├── kpi_summary.sql
+│   │   ├── orders_by_status.sql
+│   │   ├── revenue_by_customer_segment.sql
+│   │   ├── revenue_by_region.sql
+│   │   ├── revenue_by_weekday.sql
+│   │   └── top_categories.sql
+│   └── models
+├── src
+│   ├── dashboard
+│   │   └── app.py
+│   ├── etl
+│   │   ├── aggregate_retail_orders.py
+│   │   ├── create_dim_customers_table.py
+│   │   ├── create_dim_date_table.py
+│   │   ├── create_fact_orders_table.py
+│   │   ├── export_retail_kpis.py
+│   │   ├── __init__.py
+│   │   ├── query_retail_kpis.py
+│   │   ├── transform_retail_orders.py
+│   │   └── validate_retail_orders.py
+│   ├── ingestion
+│   │   └── generate_retail_data.py
+│   ├── __init__.py
+│   └── run_retail_pipeline.py
+├── tests
+│   ├── etl
+│   │   └── test_transform_retail_orders.py
+│   └── conftest.py
+├── Makefile
 ├── README.md
 └── requirements.txt
 ```
