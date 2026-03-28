@@ -8,6 +8,10 @@ This project demonstrates an end-to-end batch analytics pipeline using Python, D
 
 It starts with synthetic retail order events, transforms and validates them, loads them into a local DuckDB warehouse, models them into analytics tables, and exposes business insights through SQL queries and a dashboard UI.
 
+## Dashboard Preview
+
+![Retail Analytics Dashboard](docs/dashboard-screenshot.png)
+
 ## Architecture
 
 The pipeline follows a simple layered design:
@@ -219,7 +223,7 @@ make kpi-summary-df
 make revenue-by-region-df
 make top-categories-df
 make orders-by-status
-make daily-revue-trend
+make daily-revenue-trend
 make revenue-by-customer-segment
 make revenue-by-weekday
 ```
@@ -253,11 +257,6 @@ Run tests with:
 ```bash
 pytest
 ```
-
-## Dashboard Preview
-
-![Retail Analytics Dashboard](docs/dashboard-screenshot.png)
-
 
 ## Future Improvements
 
