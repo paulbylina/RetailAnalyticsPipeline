@@ -150,3 +150,13 @@ revenue-by-weekday:
 	con = duckdb.connect('data/warehouse/retail.duckdb'); \
 	df = con.execute(sql).fetchdf(); \
 	print(df)"
+
+# ----------------------
+# Docker
+# ----------------------
+
+docker-build:
+	@docker build -t retail-analytics-pipeline .
+
+docker-run:
+	@docker run -p 8501:8501 retail-analytics-pipeline

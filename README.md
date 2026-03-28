@@ -215,6 +215,35 @@ make create-fact-orders-table
 make create-dim-date-table
 make create-dim-customers-table
 ```
+## Running with Docker
+
+### Build the image
+
+```bash
+docker build -t retail-analytics-pipeline .
+```
+
+Or with Make:
+
+```bash
+make docker-build
+```
+
+### Run the dashboard container
+```bash
+docker compose up
+```
+
+Or:
+
+```bash
+make docker-run
+```
+
+Or:
+```bash
+docker run -p 8501:8501 retail-analytics-pipeline
+```
 
 ## Running Analytics Queries
 
