@@ -1,5 +1,7 @@
 # Retail Analytics Pipeline
 
+![CI](https://github.com/paulbylina/RetailAnalyticsPipeline/actions/workflows/ci.yml/badge.svg)
+
 A portfolio data engineering project that simulates a retail analytics workflow from raw order generation to warehouse modeling, SQL analysis, and dashboard reporting.
 
 ## Overview
