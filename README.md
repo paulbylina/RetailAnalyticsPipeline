@@ -60,6 +60,9 @@ This project is meant to show:
 
 ```text
 RetailAnalyticsPipeline/
+├── airflow
+│   └── dags
+│       └── retail_pipeline_dag.py
 ├── data
 │   ├── processed
 │   │   ├── retail_kpis.csv
@@ -69,16 +72,18 @@ RetailAnalyticsPipeline/
 │   │   └── retail_orders.jsonl
 │   └── warehouse
 │       └── retail.duckdb
+├── docs
+│   ├── airflow-dag.png
+│   └── dashboard-screenshot.png
 ├── sql
-│   ├── analytics
-│   │   ├── daily_revenue_trend.sql
-│   │   ├── kpi_summary.sql
-│   │   ├── orders_by_status.sql
-│   │   ├── revenue_by_customer_segment.sql
-│   │   ├── revenue_by_region.sql
-│   │   ├── revenue_by_weekday.sql
-│   │   └── top_categories.sql
-│   └── models
+│   └── analytics
+│       ├── daily_revenue_trend.sql
+│       ├── kpi_summary.sql
+│       ├── orders_by_status.sql
+│       ├── revenue_by_customer_segment.sql
+│       ├── revenue_by_region.sql
+│       ├── revenue_by_weekday.sql
+│       └── top_categories.sql
 ├── src
 │   ├── dashboard
 │   │   └── app.py
@@ -88,19 +93,25 @@ RetailAnalyticsPipeline/
 │   │   ├── create_dim_date_table.py
 │   │   ├── create_fact_orders_table.py
 │   │   ├── export_retail_kpis.py
+│   │   ├── __init__.py
 │   │   ├── query_retail_kpis.py
 │   │   ├── transform_retail_orders.py
 │   │   └── validate_retail_orders.py
 │   ├── ingestion
 │   │   └── generate_retail_data.py
+│   ├── __init__.py
 │   └── run_retail_pipeline.py
 ├── tests
 │   ├── etl
 │   │   └── test_transform_retail_orders.py
-│   └── conftest.py
+│   ├── conftest.py
+│   └── test_warehouse_smoke.py
+├── docker-compose.airflow.yml
+├── docker-compose.yml
+├── Dockerfile
 ├── Makefile
 ├── README.md
-└── requirements.txt
+├── requirements.txt
 ```
 
 ## Warehouse Model
@@ -259,15 +270,15 @@ make revenue-by-customer-segment
 make revenue-by-weekday
 ```
 
-## Running the Dashboard
+## Streamlit Dashboard
 
-Start the Streamlit dashboard:
+bash command
 
 ```bash
 streamlit run src/dashboard/app.py
 ```
 
-Or with Make:
+Make command
 
 ```bash
 make streamlit
@@ -281,6 +292,52 @@ The dashboard includes:
 - customer segment performance
 - weekday revenue analysis
 
+# Airflow Orchestration
+
+This project also includes an Airflow DAG for orchestrating the retail pipeline.
+
+### Start-up:
+
+```bash
+docker compose -f docker-compose.airflow.yml up
+```
+
+or:
+```bash
+Make airflow-up
+```
+
+UI will be available at:
+[http://localhost:8080](http://localhost:8080)
+
+
+### Login credentials:
+```text
+username: admin
+password: admin123
+```
+
+### Shutdown
+```bash
+docker compose -f docker-compose.airflow.yml down
+```
+
+or:
+```bash
+Make airflow-down
+```
+
+## DAG Included
+- retail_analytics_pipeline
+### This DAG orchestrates:
+- raw retail data generation
+- transformation
+- validation
+- aggregation
+- fact table creation
+- date dimension creation
+- customer dimension creation
+
 ## Testing
 
 Run tests with:
@@ -290,11 +347,7 @@ pytest
 ```
 
 ## Future Improvements
-
-Potential next steps:
-- GitHub Actions CI
-- Docker support
-- Airflow orchestration
+Next steps:
 - dbt-style SQL models
 - more robust tests
 - dashboard filters and richer interactivity

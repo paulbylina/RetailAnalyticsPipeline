@@ -160,3 +160,13 @@ docker-build:
 
 docker-run:
 	@docker run -p 8501:8501 retail-analytics-pipeline
+
+# ----------------------
+# Airflow
+# ----------------------
+
+airflow-up:
+	@docker compose -f docker-compose.airflow.yml up
+
+airflow-down:
+	@docker compose -f docker-compose.airflow.yml down
