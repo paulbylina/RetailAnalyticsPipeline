@@ -43,3 +43,12 @@ jobs:
 
       - name: Build dim_customers table
         run: python src/etl/create_dim_customers_table.py
+
+      - name: Upload pipeline outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: retail-pipeline-output
+          path: |
+            data/raw/
+            data/processed/
+            data/warehouse/
