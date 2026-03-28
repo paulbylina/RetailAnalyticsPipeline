@@ -1,6 +1,7 @@
 # ----------------------
 # Create Tables
 # ----------------------
+
 create-fact-orders-table:
 	@python src/etl/create_fact_orders_table.py
 
@@ -13,6 +14,7 @@ create-dim-customers-table:
 # ----------------------
 # Show all tables in database
 # ----------------------	
+
 show-all-tables:
 	@python -c "import duckdb; \
 	pd.set_option('display.max_columns', None); pd.set_option('display.width', 1000); \
@@ -22,18 +24,21 @@ show-all-tables:
 # ----------------------
 # Dashboard
 # ----------------------
+
 streamlit:
 	@streamlit run src/dashboard/app.py
 
 # ----------------------
 # Install dependencies
 # ----------------------
+
 install:
 	@pip install -r requirements.txt
 
 # ----------------------
 # Show table as pandas DataFrame
 # ----------------------
+
 show-data-fact-orders:
 	@python -c "import duckdb, pandas as pd; \
 	pd.set_option('display.max_columns', None); pd.set_option('display.width', 1000); \
@@ -58,6 +63,7 @@ show-data-dim-customers:
 # ----------------------
 # Table info/Datatypes
 # ----------------------
+
 show-fact-orders-datatypes:
 	@python -c "import duckdb; \
 	pd.set_option('display.max_columns', None); pd.set_option('display.width', 1000); \
@@ -85,6 +91,7 @@ show-dim-date-datatypes:
 # ----------------------
 # Analytics Queries
 # ----------------------
+
 kpi-summary-df:
 	@python -c "import duckdb, pathlib, pandas as pd; \
 	pd.set_option('display.max_columns', None); pd.set_option('display.width', 1000); \
@@ -117,7 +124,7 @@ orders-by-status:
 	df = con.execute(sql).fetchdf(); \
 	print(df)"
 
-daily-revue-trend:
+daily-reveue-trend:
 	@python -c "import duckdb, pathlib, pandas as pd; \
 	sql_file = 'daily_revenue_trend.sql'; \
 	pd.set_option('display.max_columns', None); pd.set_option('display.width', 1000); \

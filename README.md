@@ -254,15 +254,10 @@ Run tests with:
 pytest
 ```
 
-## Screenshot
+## Dashboard Preview
 
-Add a screenshot here after you capture the dashboard.
-
-Example:
-
-```markdown
 ![Retail Analytics Dashboard](docs/dashboard-screenshot.png)
-```
+
 
 ## Future Improvements
 
