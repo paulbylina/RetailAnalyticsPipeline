@@ -12,6 +12,19 @@ create-dim-customers-table:
 	@python src/etl/create_dim_customers_table.py
 
 # ----------------------
+# Launch full pipeline
+# ----------------------	
+
+full-pipeline:
+	@python src/ingestion/generate_retail_data.py
+	@python src/etl/transform_retail_orders.py
+	@python src/etl/validate_retail_orders.py
+	@python src/etl/aggregate_retail_orders.py
+	@python src/etl/create_fact_orders_table.py
+	@python src/etl/create_dim_date_table.py
+	@python src/etl/create_dim_customers_table.py
+
+# ----------------------
 # Show all tables in database
 # ----------------------	
 
@@ -20,13 +33,6 @@ show-all-tables:
 	pd.set_option('display.max_columns', None); pd.set_option('display.width', 1000); \
 	con = duckdb.connect('data/warehouse/retail.duckdb'); \
 	print(con.execute('SHOW TABLES').fetchdf())"
-
-# ----------------------
-# Dashboard
-# ----------------------
-
-streamlit:
-	@streamlit run src/dashboard/app.py
 
 # ----------------------
 # Install dependencies
@@ -155,9 +161,6 @@ revenue-by-weekday:
 # Docker
 # ----------------------
 
-docker-build:
-	@docker build -t retail-analytics-pipeline .
-
 docker-run:
 	@docker run -p 8501:8501 retail-analytics-pipeline
 
@@ -170,3 +173,45 @@ airflow-up:
 
 airflow-down:
 	@docker compose -f docker-compose.airflow.yml down
+
+# ----------------------
+# Streamlit
+# ----------------------
+
+streamlit:
+	@streamlit run src/dashboard/app.py
+
+# ----------------------
+# Help
+# ----------------------
+
+help:
+	@echo "Available targets:"
+	@echo ""
+	@echo "Setup"
+	@echo "  install                      Install dependencies"
+	@echo ""
+	@echo "Warehouse"
+	@echo "  create-fact-orders-table     Build fact_orders table"
+	@echo "  create-dim-date-table        Build dim_date table"
+	@echo "  create-dim-customers-table   Build dim_customers table"
+	@echo "  show-all-tables              Show all DuckDB tables"
+	@echo "  show-data-fact-orders        Show fact_orders data"
+	@echo "  show-data-dim-date           Show dim_date data"
+	@echo "  show-data-dim-customers      Show dim_customers data"
+	@echo "  full-pipeline                Run the full retail data pipeline"
+	@echo ""
+	@echo "Analytics"
+	@echo "  kpi-summary-df               Run KPI summary query"
+	@echo "  revenue-by-region-df         Run revenue by region query"
+	@echo "  top-categories-df            Run top categories query"
+	@echo "  orders-by-status             Run orders by status query"
+	@echo "  daily-revenue-trend          Run daily revenue trend query"
+	@echo "  revenue-by-customer-segment  Run revenue by customer segment query"
+	@echo "  revenue-by-weekday           Run revenue by weekday query"
+	@echo ""
+	@echo "Apps"
+	@echo "  streamlit                    Launch Streamlit dashboard"
+	@echo "  docker-run                   Run dashboard with Docker Compose"
+	@echo "  airflow-up                   Start Airflow"
+	@echo "  airflow-down                 Stop Airflow"

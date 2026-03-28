@@ -1,9 +1,60 @@
+# ----------------------
+# Python
+# ----------------------
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+
+# ----------------------
+# Virtual environments
+# ----------------------
 .venv/
+venv/
+env/
+
+# ----------------------
+# Testing / coverage
+# ----------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# ----------------------
+# Streamlit
+# ----------------------
+.streamlit/
+
+# ----------------------
+# Airflow
+# ----------------------
+airflow/logs/
+airflow/plugins/
+airflow/config/
+
+# ----------------------
+# Local databases / generated data
+# ----------------------
 data/raw/*
 data/processed/*
+data/warehouse/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/warehouse/.gitkeep
+
+# ----------------------
+# OS / editor files
+# ----------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ----------------------
+# Misc
+# ----------------------
 structure.txt
-data/warehouse/*duckdb
 TODO
+*.log

@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/paulbylina/RetailAnalyticsPipeline/actions/workflows/ci.yml/badge.svg)
 
-A portfolio data engineering project that simulates a retail analytics workflow from raw order generation to warehouse modeling, SQL analysis, and dashboard reporting.
+A data engineering project that simulates a retail analytics workflow from raw order generation to warehouse modeling, SQL analysis, and dashboard reporting.
 
 ## Overview
 
@@ -16,7 +16,7 @@ It starts with synthetic retail order events, transforms and validates them, loa
 
 ## Architecture
 
-The pipeline follows a simple layered design:
+The project follows a layered data engineering workflow:
 
 ```text
 Raw Data Generation
@@ -31,30 +31,43 @@ DuckDB Warehouse
 Analytics SQL Queries
         ↓
 Streamlit Dashboard
+
+Automation / Orchestration
+- GitHub Actions CI for automated test runs
+- GitHub Actions pipeline workflow for scheduled/manual execution
+- Airflow DAG for task orchestration
+- Docker / Docker Compose for containerized local execution
 ```
 
-## Tech Stack
+## Stack
 
 - Python
-- DuckDB
 - SQL
+- DuckDB
 - Pandas
 - NumPy
 - Streamlit
 - Altair
 - Pytest
+- Docker
+- Docker Compose
+- GitHub Actions
+- Apache Airflow
 - Makefile
 
 ## Project Goals
 
-This project is meant to show:
+This project is designed to demonstrate:
 
-- raw data ingestion and generation
+- batch data ingestion and generation
 - ETL transformation and validation
 - warehouse-style modeling with fact and dimension tables
-- SQL-based analytics queries
-- dashboard reporting for business stakeholders
-- a clean, interview-ready project structure
+- SQL-based analytics for business reporting
+- dashboard delivery through Streamlit
+- automated testing and CI with GitHub Actions
+- containerized local execution with Docker and Docker Compose
+- workflow orchestration with Apache Airflow
+- a clean data engineering project structure
 
 ## Project Structure
 
@@ -65,13 +78,8 @@ RetailAnalyticsPipeline/
 │       └── retail_pipeline_dag.py
 ├── data
 │   ├── processed
-│   │   ├── retail_kpis.csv
-│   │   ├── retail_orders_clean.jsonl
-│   │   └── retail_order_summary.json
 │   ├── raw
-│   │   └── retail_orders.jsonl
 │   └── warehouse
-│       └── retail.duckdb
 ├── docs
 │   ├── airflow-dag.png
 │   └── dashboard-screenshot.png
@@ -85,21 +93,21 @@ RetailAnalyticsPipeline/
 │       ├── revenue_by_weekday.sql
 │       └── top_categories.sql
 ├── src
+│   ├── __init__.py
 │   ├── dashboard
 │   │   └── app.py
 │   ├── etl
+│   │   ├── __init__.py
 │   │   ├── aggregate_retail_orders.py
 │   │   ├── create_dim_customers_table.py
 │   │   ├── create_dim_date_table.py
 │   │   ├── create_fact_orders_table.py
 │   │   ├── export_retail_kpis.py
-│   │   ├── __init__.py
 │   │   ├── query_retail_kpis.py
 │   │   ├── transform_retail_orders.py
 │   │   └── validate_retail_orders.py
 │   ├── ingestion
 │   │   └── generate_retail_data.py
-│   ├── __init__.py
 │   └── run_retail_pipeline.py
 ├── tests
 │   ├── etl
@@ -111,8 +119,9 @@ RetailAnalyticsPipeline/
 ├── Dockerfile
 ├── Makefile
 ├── README.md
-├── requirements.txt
+└── requirements.txt
 ```
+* Generated pipeline outputs are written to the `data/raw`, `data/processed`, and `data/warehouse` directories when the pipeline runs.
 
 ## Warehouse Model
 
@@ -226,32 +235,25 @@ make create-fact-orders-table
 make create-dim-date-table
 make create-dim-customers-table
 ```
+
 ## Running with Docker
-
-### Build the image
-
+### Recommended: Docker Compose
 ```bash
-docker build -t retail-analytics-pipeline .
+docker compose up
 ```
 
 Or with Make:
 
 ```bash
-make docker-build
-```
-
-### Run the dashboard container
-```bash
-docker compose up
-```
-
-Or:
-
-```bash
 make docker-run
 ```
+## Manual Docker run
+### Build the image
 
-Or:
+```bash
+docker build -t retail-analytics-pipeline .
+```
+### Run the container:
 ```bash
 docker run -p 8501:8501 retail-analytics-pipeline
 ```
@@ -272,13 +274,13 @@ make revenue-by-weekday
 
 ## Streamlit Dashboard
 
-bash command
+### Start with Bash
 
 ```bash
 streamlit run src/dashboard/app.py
 ```
 
-Make command
+### Start with Make
 
 ```bash
 make streamlit
@@ -292,11 +294,13 @@ The dashboard includes:
 - customer segment performance
 - weekday revenue analysis
 
-# Airflow Orchestration
+## Airflow Orchestration
 
 This project also includes an Airflow DAG for orchestrating the retail pipeline.
 
-### Start-up:
+![Airflow DAG](docs/airflow-dag.png)
+
+### Start Airflow:
 
 ```bash
 docker compose -f docker-compose.airflow.yml up
@@ -304,7 +308,7 @@ docker compose -f docker-compose.airflow.yml up
 
 or:
 ```bash
-Make airflow-up
+make airflow-up
 ```
 
 UI will be available at:
@@ -324,7 +328,7 @@ docker compose -f docker-compose.airflow.yml down
 
 or:
 ```bash
-Make airflow-down
+make airflow-down
 ```
 
 ## DAG Included
@@ -338,6 +342,15 @@ Make airflow-down
 - date dimension creation
 - customer dimension creation
 
+## CI / Automation
+
+This project includes two GitHub Actions workflows:
+
+- **CI workflow**: runs automated tests on pushes and pull requests
+- **Retail pipeline workflow**: supports manual runs and scheduled pipeline execution
+
+The pipeline workflow also uploads generated outputs as workflow artifacts so results can be inspected from GitHub Actions.
+
 ## Testing
 
 Run tests with:
@@ -347,19 +360,10 @@ pytest
 ```
 
 ## Future Improvements
-Next steps:
 - dbt-style SQL models
-- more robust tests
+- more tests
+  - validation tests
+  - SQL smoke tests
+  - dashboard smoke test
 - dashboard filters and richer interactivity
 - cloud deployment
-
-## Why This Project Matters
-
-This project is designed to show practical data engineering skills in a portfolio-friendly format.
-
-It demonstrates the ability to:
-- structure a data project cleanly
-- build ETL pipelines
-- model analytics data in a warehouse pattern
-- write business-facing SQL
-- present results through a dashboard UI
