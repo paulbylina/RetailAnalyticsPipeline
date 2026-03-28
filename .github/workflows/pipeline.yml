@@ -1,0 +1,45 @@
+name: Retail Pipeline
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 13 * * *"
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate retail data
+        run: python src/ingestion/generate_retail_data.py
+
+      - name: Transform retail orders
+        run: python src/etl/transform_retail_orders.py
+
+      - name: Validate retail orders
+        run: python src/etl/validate_retail_orders.py
+
+      - name: Aggregate retail orders
+        run: python src/etl/aggregate_retail_orders.py
+
+      - name: Build fact_orders table
+        run: python src/etl/create_fact_orders_table.py
+
+      - name: Build dim_date table
+        run: python src/etl/create_dim_date_table.py
+
+      - name: Build dim_customers table
+        run: python src/etl/create_dim_customers_table.py
