@@ -365,3 +365,4 @@ pytest
   - dashboard smoke test
 - dashboard filters and richer interactivity
 - cloud deployment
+- See [Databricks / GCP Architecture Mapping](docs/databricks-gcp-mapping.md) for how this project maps to a cloud-native Databricks + GCP stack.
