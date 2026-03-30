@@ -10,7 +10,7 @@ It starts with synthetic retail order events, transforms and validates them, loa
 
 ## Dashboard Preview
 
-![Retail Analytics Dashboard](docs/dashboard-screenshot.png)
+![Retail Analytics Dashboard](docs/images/dashboard.png)
 
 ## Architecture
 
@@ -310,7 +310,7 @@ The dashboard includes:
 
 This project also includes an Airflow DAG for orchestrating the retail pipeline.
 
-![Airflow DAG](docs/airflow-dag.png)
+![Airflow DAG](docs/images/airflow-dag.png)
 
 ### Start Airflow:
 
