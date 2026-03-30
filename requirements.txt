@@ -1,4 +1,5 @@
 duckdb
+pyspark
 pytest
 pandas
 numpy

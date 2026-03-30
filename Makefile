@@ -1,4 +1,10 @@
 # ----------------------
+# Install dependencies
+# ----------------------
+install:
+	@pip install -r requirements.txt
+
+# ----------------------
 # Create Tables
 # ----------------------
 
@@ -33,13 +39,6 @@ show-all-tables:
 	pd.set_option('display.max_columns', None); pd.set_option('display.width', 1000); \
 	con = duckdb.connect('data/warehouse/retail.duckdb'); \
 	print(con.execute('SHOW TABLES').fetchdf())"
-
-# ----------------------
-# Install dependencies
-# ----------------------
-
-install:
-	@pip install -r requirements.txt
 
 # ----------------------
 # Show table as pandas DataFrame
@@ -182,6 +181,13 @@ streamlit:
 	@streamlit run src/dashboard/app.py
 
 # ----------------------
+# Pyspark
+# ----------------------
+
+pyspark-transform:
+	@python src/etl/transform_retail_orders_pyspark.py
+
+# ----------------------
 # Help
 # ----------------------
 
@@ -215,3 +221,4 @@ help:
 	@echo "  docker-run                   Run dashboard with Docker Compose"
 	@echo "  airflow-up                   Start Airflow"
 	@echo "  airflow-down                 Stop Airflow"
+	@echo "  pyspark-transform            Transform retail orders with Pyspark"

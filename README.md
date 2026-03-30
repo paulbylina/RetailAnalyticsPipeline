@@ -37,10 +37,19 @@ Automation / Orchestration
 - Docker / Docker Compose for containerized local execution
 ```
 
+## PySpark Variant
+
+This project also includes a PySpark-based transformation example in:
+
+```text
+src/etl/transform_retail_orders_pyspark.py
+```
+
 ## Stack
 
 - Python
 - SQL
+- Pyspark
 - DuckDB
 - Pandas
 - NumPy
@@ -210,12 +219,17 @@ make install
 python src/ingestion/generate_retail_data.py
 ```
 
-### 2. Transform and validate the data
+### 2A. Transform and validate the data
 
 ```bash
 python src/etl/transform_retail_orders.py
 python src/etl/validate_retail_orders.py
 python src/etl/aggregate_retail_orders.py
+```
+### 2B. Run the PySpark transform
+
+```bash
+make pyspark-transform
 ```
 
 ### 3. Build the DuckDB warehouse tables
