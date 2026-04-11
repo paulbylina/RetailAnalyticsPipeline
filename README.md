@@ -12,9 +12,10 @@ RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates 
 - GitHub Actions CI
 - Streamlit dashboard
 - PySpark transformation path
+- Optional BigQuery warehouse target for `fact_orders`
+- BigQuery verification script
 
 **Future enhancements**:
-- BigQuery warehouse target
 - Streaming ingestion
 - dbt models
 - Expanded data quality checks and observability
@@ -269,6 +270,57 @@ make airflow-down
 - fact table creation
 - date dimension creation
 - customer dimension creation
+
+## BigQuery Cloud Target
+This project includes an optional BigQuery warehouse target for the `fact_orders` table.
+
+### Prerequisites
+- Google Cloud project
+- BigQuery API enabled
+- Local Application Default Credentials configured with `gcloud auth application-default login`
+
+### Environment Variables
+```bash
+export GCP_PROJECT_ID="retail-analytics-pipeline-01"
+export BIGQUERY_DATASET="retail_analytics"
+```
+
+### Load fact_orders to BigQuery
+```python
+python src/load/load_fact_orders_to_bigquery.py
+```
+This reads the local DuckDB ```fact_orders```table and loads it into BigQuery.
+
+### Verify the BigQuery table
+```python
+python src/load/verify_fact_orders_in_bigquery.py
+```
+This runs a smoke test against the BigQuery table and checks:
+- row count
+- distinct order_id count
+- min/max order_date
+- total revenue
+
+### Current BigQuery Scope
+Implemented:
+- create dataset if it does not exist
+- load fact_orders from DuckDB to BigQuery
+- verify the loaded table with a cloud-side query
+
+Planned:
+- load dimension tables
+- orchestrate cloud load with Airflow
+- add BigQuery data quality assertions in CI
+
+
+
+
+
+
+
+
+
+
 
 ## CI / Automation
 This project includes two GitHub Actions workflows:
