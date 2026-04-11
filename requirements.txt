@@ -7,3 +7,5 @@ streamlit
 altair
 fastapi
 uvicorn
+google-cloud-bigquery
+pandas-gbq
