@@ -1,5 +1,7 @@
 from src.etl.transform_retail_orders import clean_order
+import pytest
 
+pytestmark = pytest.mark.etl
 
 def test_clean_order_normalizes_fields_and_adds_amount_bucket():
     raw_order = {

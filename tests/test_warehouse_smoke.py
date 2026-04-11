@@ -2,11 +2,11 @@ from pathlib import Path
 import subprocess
 import sys
 import duckdb
-
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DB_FILE = PROJECT_ROOT / "data" / "warehouse" / "retail.duckdb"
-
+pytestmark = pytest.mark.warehouse
 
 def run_script(script_path: str) -> None:
     full_path = PROJECT_ROOT / script_path

@@ -188,6 +188,25 @@ pyspark-transform:
 	@python src/etl/transform_retail_orders_pyspark.py
 
 # ----------------------
+# Redpanda
+# ----------------------
+
+stream-up:
+	docker compose up -d redpanda redpanda-console
+
+stream-topic:
+	docker exec -it redpanda rpk topic create retail-orders -p 1
+
+stream-produce:
+	python src/streaming/produce_retail_orders.py
+
+stream-consume:
+	python src/streaming/consume_retail_orders_to_duckdb.py
+
+test-streaming:
+	pytest tests/test_streaming_events_smoke.py -v
+
+# ----------------------
 # Help
 # ----------------------
 

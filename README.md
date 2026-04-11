@@ -14,6 +14,10 @@ RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates 
 - PySpark transformation path
 - Optional BigQuery warehouse target for `fact_orders`
 - BigQuery verification script
+- Local streaming pipeline using Redpanda
+- Python producer publishing retail order events to a Kafka-compatible topic
+- Python consumer loading streamed events into DuckDB
+- Streaming smoke test for `retail_order_events`
 
 **Future enhancements**:
 - Streaming ingestion
@@ -312,16 +316,6 @@ Planned:
 - orchestrate cloud load with Airflow
 - add BigQuery data quality assertions in CI
 
-
-
-
-
-
-
-
-
-
-
 ## CI / Automation
 This project includes two GitHub Actions workflows:
 
@@ -329,6 +323,50 @@ This project includes two GitHub Actions workflows:
 - **Retail pipeline workflow**: supports manual runs and scheduled pipeline execution
 
 The pipeline workflow also uploads generated outputs as workflow artifacts so results can be inspected from GitHub Actions.
+
+## Streaming Pipeline
+This project includes a local streaming path built with Redpanda.
+
+Flow:
+
+Clean retail order events (JSONL)
+→ Python producer
+→ Redpanda topic (`retail-orders`)
+→ Python consumer
+→ DuckDB landing table (`retail_order_events`)
+
+### Components
+- **Broker:** Redpanda
+- **Topic:** `retail-orders`
+- **Producer:** `src/streaming/produce_retail_orders.py`
+- **Consumer:** `src/streaming/consume_retail_orders_to_duckdb.py`
+- **Landing table:** `retail_order_events` in DuckDB
+
+### Start Redpanda
+```bash
+docker compose up -d redpanda redpanda-console
+```
+
+### Create the topic
+```bash
+docker exec -it redpanda rpk topic create retail-orders -p 1
+```
+
+### Produce events
+```bash
+python src/streaming/produce_retail_orders.py
+```
+
+### Consume events into DuckDB
+```bash
+python src/streaming/consume_retail_orders_to_duckdb.py
+```
+
+### Run the streaming smoke test
+```bash
+pytest tests/test_streaming_events_smoke.py -v
+```
+This streaming path demonstrates event-driven ingestion alongside the project’s existing batch pipeline.
 
 ## Planned Enhancements
 - dbt-style SQL models
@@ -339,6 +377,7 @@ The pipeline workflow also uploads generated outputs as workflow artifacts so re
 - dashboard filters and richer interactivity
 - cloud deployment
 - See [Databricks / GCP Architecture Mapping](docs/databricks-gcp-mapping.md) for how this project maps to a cloud-native Databricks + GCP stack.
+- Streaming path planned with Redpanda: simulated retail order events -> Redpanda topic -> Python consumer -> DuckDB staging/events table.
 
 ## Dashboard Preview
 ![Retail Analytics Dashboard](docs/images/dashboard.png)
