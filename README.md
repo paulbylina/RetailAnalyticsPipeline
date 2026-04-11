@@ -11,13 +11,15 @@ RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates 
 - Docker / Docker Compose
 - GitHub Actions CI
 - Streamlit dashboard
-- PySpark transformation path
 - Optional BigQuery warehouse target for `fact_orders`
 - BigQuery verification script
 - Local streaming pipeline using Redpanda
 - Python producer publishing retail order events to a Kafka-compatible topic
 - Python consumer loading streamed events into DuckDB
 - Streaming smoke test for `retail_order_events`
+- PySpark transformation path for curated `fact_orders`
+- Curated Spark Parquet output at `data/curated/fact_orders_spark.parquet`
+- Spark smoke test for curated output
 
 **Future enhancements**:
 - Streaming ingestion
@@ -368,6 +370,35 @@ pytest tests/test_streaming_events_smoke.py -v
 ```
 This streaming path demonstrates event-driven ingestion alongside the project’s existing batch pipeline.
 
+### Test suites
+- `pytest -m etl -v` → ETL/unit-style tests
+- `pytest -m warehouse -v` → local DuckDB warehouse tests
+- `pytest -m integration -v` → cloud integration tests (requires GCP credentials and environment variables)
+
+Note: BigQuery integration tests are expected to skip in CI unless GCP credentials are configured.
+
+
+## Spark Pipeline
+This project includes a PySpark transformation path that builds a curated `fact_orders` dataset from cleaned retail order events.
+
+#### Run the Spark transformation
+```bash
+python src/etl/run_spark_fact_orders.py
+```
+This reads data/processed/retail_orders_clean.jsonl and writes curated Parquet output to:
+- data/curated/fact_orders_spark.parquet
+
+#### Validate the Spark output
+```bash
+pytest tests/test_spark_fact_orders_smoke.py -v
+```
+This verifies:
+- the Spark Parquet output exists
+- the dataset has rows
+- **order_id** remains unique
+- **total_amount** is non-negative
+
+
 ## Planned Enhancements
 - dbt-style SQL models
 - more tests
@@ -378,6 +409,7 @@ This streaming path demonstrates event-driven ingestion alongside the project’
 - cloud deployment
 - See [Databricks / GCP Architecture Mapping](docs/databricks-gcp-mapping.md) for how this project maps to a cloud-native Databricks + GCP stack.
 - Streaming path planned with Redpanda: simulated retail order events -> Redpanda topic -> Python consumer -> DuckDB staging/events table.
+
 
 ## Dashboard Preview
 ![Retail Analytics Dashboard](docs/images/dashboard.png)
