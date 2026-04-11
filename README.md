@@ -4,9 +4,7 @@
 
 ## Overview
 
-This project demonstrates an end-to-end batch analytics pipeline using Python, DuckDB, SQL, and Streamlit.
-
-It starts with synthetic retail order events, transforms and validates them, loads them into a local DuckDB warehouse, models them into analytics tables, and exposes business insights through SQL queries and a dashboard UI.
+RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates a modern retail data workflow. It generates raw retail data, transforms it with Python/SQL and PySpark, loads curated datasets into DuckDB, orchestrates jobs with Airflow, and serves business insights through a Streamlit dashboard. The project is designed to demonstrate practical data engineering skills including modeling, orchestration, testing, containerization, and analytics delivery.
 
 ## Dashboard Preview
 
