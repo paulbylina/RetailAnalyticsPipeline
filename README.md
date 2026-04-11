@@ -1,17 +1,42 @@
-# Retail Analytics Pipeline
-
-![CI](https://github.com/paulbylina/RetailAnalyticsPipeline/actions/workflows/ci.yml/badge.svg)
+# *Retail Analytics Pipeline* ![CI](https://github.com/paulbylina/RetailAnalyticsPipeline/actions/workflows/ci.yml/badge.svg)
 
 ## Overview
-
 RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates a modern retail data workflow. It generates raw retail data, transforms it with Python/SQL and PySpark, loads curated datasets into DuckDB, orchestrates jobs with Airflow, and serves business insights through a Streamlit dashboard. The project is designed to demonstrate practical data engineering skills including modeling, orchestration, testing, containerization, and analytics delivery.
 
-## Dashboard Preview
+## Current Scope
+**Implemented**:
+- Batch pipeline
+- Local warehouse in DuckDB
+- Airflow orchestration
+- Docker / Docker Compose
+- GitHub Actions CI
+- Streamlit dashboard
+- PySpark transformation path
 
-![Retail Analytics Dashboard](docs/images/dashboard.png)
+**Future enhancements**:
+- BigQuery warehouse target
+- Streaming ingestion
+- dbt models
+- Expanded data quality checks and observability
+- Kubernetes deployment
+
+## Tech Stack
+- Python
+- SQL
+- Pyspark
+- DuckDB
+- Pandas
+- NumPy
+- Streamlit
+- Altair
+- Pytest
+- Docker
+- Docker Compose
+- GitHub Actions
+- Apache Airflow
+- Makefile
 
 ## Architecture
-
 The project follows a layered data engineering workflow:
 
 ```text
@@ -35,47 +60,7 @@ Automation / Orchestration
 - Docker / Docker Compose for containerized local execution
 ```
 
-## PySpark Variant
-
-This project also includes a PySpark-based transformation example in:
-
-```text
-src/etl/transform_retail_orders_pyspark.py
-```
-
-## Stack
-
-- Python
-- SQL
-- Pyspark
-- DuckDB
-- Pandas
-- NumPy
-- Streamlit
-- Altair
-- Pytest
-- Docker
-- Docker Compose
-- GitHub Actions
-- Apache Airflow
-- Makefile
-
-## Project Goals
-
-This project is designed to demonstrate:
-
-- batch data ingestion and generation
-- ETL transformation and validation
-- warehouse-style modeling with fact and dimension tables
-- SQL-based analytics for business reporting
-- dashboard delivery through Streamlit
-- automated testing and CI with GitHub Actions
-- containerized local execution with Docker and Docker Compose
-- workflow orchestration with Apache Airflow
-- a clean data engineering project structure
-
 ## Project Structure
-
 ```text
 RetailAnalyticsPipeline/
 ├── airflow
@@ -128,77 +113,20 @@ RetailAnalyticsPipeline/
 ```
 * Generated pipeline outputs are written to the `data/raw`, `data/processed`, and `data/warehouse` directories when the pipeline runs.
 
-## Warehouse Model
-
-The DuckDB warehouse contains a small star-schema-style layout:
-
-### fact_orders
-The central transaction table containing one row per retail order.
-
-Example fields:
-- order_id
-- customer_id
-- product_id
-- order_date
-- category
-- region
-- payment_method
-- order_status
-- quantity
-- unit_price
-- total_amount
-
-### dim_date
-A calendar dimension used for time-based analysis.
-
-Example fields:
-- date_key
-- full_date
-- year
-- month
-- month_name
-- day
-- weekday_name
-- weekend_flag
-
-### dim_customers
-A customer lookup dimension used for segmentation analysis.
-
-Example fields:
-- customer_id
-- customer_segment
-
-## Analytics Questions Answered
-
-The SQL analytics layer answers questions like:
-
-- How many total orders were placed?
-- What is total revenue and average order value?
-- Which regions generate the most revenue?
-- Which product categories perform best?
-- How are orders distributed by status?
-- How is revenue trending over time?
-- How do customer segments perform?
-- Which weekdays generate the most revenue?
-
-## Setup
-
+## How to Run
 ### 1. Clone the repository
-
 ```bash
 git clone https://github.com/paulbylina/RetailAnalyticsPipeline.git
 cd RetailAnalyticsPipeline
 ```
 
 ### 2. Create and activate a virtual environment
-
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
 ### 3. Install dependencies
-
 ```bash
 pip install -r requirements.txt
 ```
@@ -210,28 +138,23 @@ make install
 ```
 
 ## Running the Pipeline
-
 ### 1. Generate raw retail data
-
 ```bash
 python src/ingestion/generate_retail_data.py
 ```
 
 ### 2A. Transform and validate the data
-
 ```bash
 python src/etl/transform_retail_orders.py
 python src/etl/validate_retail_orders.py
 python src/etl/aggregate_retail_orders.py
 ```
 ### 2B. Run the PySpark transform
-
 ```bash
 make pyspark-transform
 ```
 
 ### 3. Build the DuckDB warehouse tables
-
 ```bash
 python src/etl/create_fact_orders_table.py
 python src/etl/create_dim_date_table.py
@@ -269,7 +192,6 @@ docker run -p 8501:8501 retail-analytics-pipeline
 ```
 
 ## Running Analytics Queries
-
 Example:
 
 ```bash
@@ -283,7 +205,6 @@ make revenue-by-weekday
 ```
 
 ## Streamlit Dashboard
-
 ### Start with Bash
 
 ```bash
@@ -291,7 +212,6 @@ streamlit run src/dashboard/app.py
 ```
 
 ### Start with Make
-
 ```bash
 make streamlit
 ```
@@ -305,13 +225,11 @@ The dashboard includes:
 - weekday revenue analysis
 
 ## Airflow Orchestration
-
 This project also includes an Airflow DAG for orchestrating the retail pipeline.
 
 ![Airflow DAG](docs/images/airflow-dag.png)
 
 ### Start Airflow:
-
 ```bash
 docker compose -f docker-compose.airflow.yml up
 ```
@@ -353,7 +271,6 @@ make airflow-down
 - customer dimension creation
 
 ## CI / Automation
-
 This project includes two GitHub Actions workflows:
 
 - **CI workflow**: runs automated tests on pushes and pull requests
@@ -361,15 +278,7 @@ This project includes two GitHub Actions workflows:
 
 The pipeline workflow also uploads generated outputs as workflow artifacts so results can be inspected from GitHub Actions.
 
-## Testing
-
-Run tests with:
-
-```bash
-pytest
-```
-
-## Future Improvements
+## Planned Enhancements
 - dbt-style SQL models
 - more tests
   - validation tests
@@ -378,3 +287,6 @@ pytest
 - dashboard filters and richer interactivity
 - cloud deployment
 - See [Databricks / GCP Architecture Mapping](docs/databricks-gcp-mapping.md) for how this project maps to a cloud-native Databricks + GCP stack.
+
+## Dashboard Preview
+![Retail Analytics Dashboard](docs/images/dashboard.png)
