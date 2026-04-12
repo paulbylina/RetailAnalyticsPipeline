@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retail-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: retail-dashboard
+  template:
+    metadata:
+      labels:
+        app: retail-dashboard
+    spec:
+      containers:
+        - name: retail-dashboard
+          image: retail-analytics-dashboard:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8501

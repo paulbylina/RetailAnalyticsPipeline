@@ -398,6 +398,84 @@ This verifies:
 - **order_id** remains unique
 - **total_amount** is non-negative
 
+## Data Quality and Observability
+This project includes multiple layers of data-quality validation and operational visibility.
+
+#### Data Quality
+- **Pytest ETL tests** for transformation logic
+- **DuckDB warehouse smoke tests** for `fact_orders`
+- **Streaming smoke tests** for `retail_order_events`
+- **Spark smoke tests** for curated Parquet output
+- **Great Expectations validation** for `fact_orders`
+- **BigQuery integration test** for cloud warehouse verification
+
+#### Validation Commands
+```bash
+make test-etl
+make test-warehouse
+make test-streaming
+make test-spark
+make validate-gx
+make verify-bigquery
+```
+
+#### Observability
+Core pipeline scripts now emit structured logs for:
+- BigQuery load and verification
+- streaming producer and consumer flows
+- Spark fact table generation
+- Great Expectations validation
+
+This makes pipeline runs easier to debug and gives the project a more production-style operational story.
+
+## Kubernetes Deployment
+This project includes a local Kubernetes deployment path for the Streamlit dashboard.
+
+#### Kubernetes Manifests
+- `k8s/dashboard-deployment.yaml`
+- `k8s/dashboard-service.yaml`
+
+#### Build the dashboard image
+```bash
+docker build -t retail-analytics-dashboard:latest .
+```
+
+#### Create a local cluster
+```bash
+kind create cluster
+kind load docker-image retail-analytics-dashboard:latest
+```
+
+#### Deploy to Kubernetes
+```bash
+kubectl apply -f k8s/dashboard-deployment.yaml
+kubectl apply -f k8s/dashboard-service.yaml
+kubectl rollout status deployment/retail-dashboard --timeout=5m
+```
+
+#### Access the dashboard
+```bash
+kubectl port-forward service/retail-dashboard-service 8501:8501
+```
+Then open:
+```bash
+http://localhost:8501
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Planned Enhancements
 - dbt-style SQL models

@@ -193,10 +193,10 @@ spark-run:
 test-spark:
 	@pytest tests/test_spark_fact_orders_smoke.py -v
 
+
 # ----------------------
 # Redpanda
 # ----------------------
-
 stream-up:
 	docker compose up -d redpanda redpanda-console
 
@@ -204,20 +204,45 @@ stream-topic:
 	docker exec -it redpanda rpk topic create retail-orders -p 1
 
 stream-produce:
-	@python -m src.streaming.produce_retail_orders
+	python -m src.streaming.produce_retail_orders
 
 stream-consume:
-	@python -m src.streaming.consume_retail_orders_to_duckdb
+	python -m src.streaming.consume_retail_orders_to_duckdb
 
 test-streaming:
 	pytest tests/test_streaming_events_smoke.py -v
 
 
 # ----------------------
+# Kubernetes
+# ----------------------
+k8s-apply:
+	kubectl apply -f k8s/dashboard-deployment.yaml
+	kubectl apply -f k8s/dashboard-service.yaml
+
+k8s-status:
+	kubectl rollout status deployment/retail-dashboard --timeout=5m
+	kubectl get pods,svc
+
+k8s-port-forward:
+	kubectl port-forward service/retail-dashboard-service 8501:8501
+
+
+# ----------------------
+# Validation
+# ----------------------
+validate-gx:
+	python -m src.quality.validate_fact_orders_with_gx
+
+verify-bigquery:
+	python -m src.load.verify_fact_orders_in_bigquery
+
+
+# ----------------------
 # Tests
 # ----------------------
 test-etl:
-	@pytest -m etl -v
+	pytest -m etl -v
 
 
 # ----------------------

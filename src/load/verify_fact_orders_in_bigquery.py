@@ -4,7 +4,9 @@ import os
 import sys
 
 from google.cloud import bigquery
+from src.common.log_utils import get_logger, log_event
 
+logger = get_logger(__name__)
 
 def require_env(var_name: str) -> str:
     value = os.getenv(var_name)
@@ -35,12 +37,16 @@ def main() -> int:
         result = client.query(query).result()
         row = next(result)
 
-        print(f"Verified table: {table_ref}")
-        print(f"row_count={row.row_count}")
-        print(f"distinct_order_ids={row.distinct_order_ids}")
-        print(f"min_order_date={row.min_order_date}")
-        print(f"max_order_date={row.max_order_date}")
-        print(f"total_revenue={row.total_revenue}")
+        log_event(
+            logger,
+            "bigquery_verification_result",
+            table=table_ref,
+            row_count=row.row_count,
+            distinct_order_ids=row.distinct_order_ids,
+            min_order_date=row.min_order_date,
+            max_order_date=row.max_order_date,
+            total_revenue=row.total_revenue,
+        )
 
         if row.row_count == 0:
             raise ValueError("BigQuery table is empty.")
@@ -48,11 +54,11 @@ def main() -> int:
         if row.row_count != row.distinct_order_ids:
             raise ValueError("order_id is not unique in BigQuery table.")
 
-        print("BigQuery verification completed successfully.")
+        log_event(logger, "bigquery_verification_complete", table=table_ref, success=True)
         return 0
 
     except Exception as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
+        logger.error("bigquery_verification_failed | error=%s", exc)
         return 1
 
 
