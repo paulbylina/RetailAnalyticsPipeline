@@ -69,3 +69,6 @@ Thumbs.db
 structure.txt
 TODO
 *.log
+# Local CLI binaries
+kubectl
+kind
