@@ -11,11 +11,13 @@ from pyspark.sql.types import (
     StringType,
 )
 
+from src.common.log_utils import get_logger, log_event
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 INPUT_PATH = PROJECT_ROOT / "data" / "processed" / "retail_orders_clean.jsonl"
 OUTPUT_PATH = PROJECT_ROOT / "data" / "curated" / "fact_orders_spark.parquet"
 
+logger = get_logger(__name__)
 
 def build_spark() -> SparkSession:
     return (
@@ -36,7 +38,12 @@ def main() -> int:
         spark = build_spark()
         spark.sparkContext.setLogLevel("WARN")
 
-        print(f"Reading cleaned retail orders from: {INPUT_PATH}")
+        log_event(
+            logger,
+            "spark_fact_orders_started",
+            input_path=str(INPUT_PATH),
+            output_path=str(OUTPUT_PATH),
+        )
         df = spark.read.json(str(INPUT_PATH))
 
         fact_orders_df = (
@@ -65,11 +72,16 @@ def main() -> int:
 
         fact_orders_df.write.mode("overwrite").parquet(str(OUTPUT_PATH))
 
-        print(f"Wrote {row_count} rows to: {OUTPUT_PATH}")
+        log_event(
+            logger,
+            "spark_fact_orders_complete",
+            output_path=str(OUTPUT_PATH),
+            row_count=row_count,
+        )
         return 0
 
     except Exception as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
+        logger.error("spark_fact_orders_failed | error=%s", exc)
         return 1
 
     finally:

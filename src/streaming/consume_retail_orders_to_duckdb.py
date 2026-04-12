@@ -8,7 +8,7 @@ from pathlib import Path
 import duckdb
 import pandas as pd
 from kafka import KafkaConsumer
-
+from src.common.log_utils import get_logger, log_event
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DUCKDB_PATH = PROJECT_ROOT / "data" / "warehouse" / "retail.duckdb"
@@ -17,6 +17,8 @@ BROKER = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:19092")
 TOPIC = os.getenv("KAFKA_TOPIC", "retail-orders")
 GROUP_ID = os.getenv("KAFKA_GROUP_ID", "retail-orders-duckdb-loader")
 MAX_MESSAGES = int(os.getenv("MAX_MESSAGES", "25"))
+
+logger = get_logger(__name__)
 
 
 def build_consumer() -> KafkaConsumer:
@@ -56,9 +58,14 @@ def ensure_table_exists(conn: duckdb.DuckDBPyConnection) -> None:
 
 def main() -> int:
     try:
-        print(f"Consuming from broker: {BROKER}")
-        print(f"Consuming from topic: {TOPIC}")
-        print(f"Writing to DuckDB: {DUCKDB_PATH}")
+        log_event(
+            logger,
+            "stream_consumer_started",
+            broker=BROKER,
+            topic=TOPIC,
+            duckdb_path=str(DUCKDB_PATH),
+            group_id=GROUP_ID,
+        )
 
         consumer = build_consumer()
         rows: list[dict] = []
@@ -67,7 +74,13 @@ def main() -> int:
             event = message.value
             event["kafka_key"] = message.key
             rows.append(event)
-            print(f"Consumed event for order_id={event.get('order_id')}")
+            log_event(
+                logger,
+                "stream_event_consumed",
+                order_id=event.get("order_id"),
+                topic=TOPIC,
+                kafka_key=message.key,
+            )
 
             if idx + 1 >= MAX_MESSAGES:
                 break
@@ -86,28 +99,38 @@ def main() -> int:
                 """
                 INSERT INTO retail_order_events
                 SELECT
-                    order_id,
-                    customer_id,
-                    product_id,
-                    category,
-                    quantity,
-                    unit_price,
-                    total_amount,
-                    payment_method,
-                    order_status,
-                    region,
-                    CAST(timestamp AS TIMESTAMP),
-                    amount_bucket,
-                    kafka_key
-                FROM events_df
+                    e.order_id,
+                    e.customer_id,
+                    e.product_id,
+                    e.category,
+                    e.quantity,
+                    e.unit_price,
+                    e.total_amount,
+                    e.payment_method,
+                    e.order_status,
+                    e.region,
+                    CAST(e.timestamp AS TIMESTAMP),
+                    e.amount_bucket,
+                    e.kafka_key
+                FROM events_df e
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM retail_order_events r
+                    WHERE r.order_id = e.order_id
+                )
                 """
             )
 
-        print(f"Inserted {len(df)} events into retail_order_events")
+        log_event(
+            logger,
+            "stream_consumer_complete",
+            target_table="retail_order_events",
+            row_count=len(df),
+        )
         return 0
 
     except Exception as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
+        logger.error("stream_consumer_failed | error=%s", exc)
         return 1
 
 

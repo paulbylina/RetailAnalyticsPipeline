@@ -212,6 +212,14 @@ stream-consume:
 test-streaming:
 	pytest tests/test_streaming_events_smoke.py -v
 
+
+# ----------------------
+# Tests
+# ----------------------
+test-etl:
+	@pytest -m etl -v
+
+
 # ----------------------
 # Help
 # ----------------------
