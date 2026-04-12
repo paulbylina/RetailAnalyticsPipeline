@@ -10,6 +10,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DUCKDB_PATH = PROJECT_ROOT / "data" / "warehouse" / "retail.duckdb"
 TABLE_NAME = "retail_order_events"
 
+if not DUCKDB_PATH.exists():
+    pytest.skip(
+        f"Missing DuckDB database: {DUCKDB_PATH}. Run the warehouse pipeline first.",
+        allow_module_level=True,
+    )
 
 def query_one(sql: str):
     with duckdb.connect(str(DUCKDB_PATH)) as conn:
