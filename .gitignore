@@ -35,6 +35,17 @@ airflow/plugins/
 airflow/config/
 
 # ----------------------
+# Generated Spark output
+# ----------------------
+data/curated/fact_orders_spark.parquet/
+
+# ----------------------
+# Generated warehouse / local data artifacts
+# ----------------------
+data/warehouse/retail.duckdb
+data/warehouse/*.wal
+
+# ----------------------
 # Local databases / generated data
 # ----------------------
 data/raw/*

@@ -9,3 +9,4 @@ fastapi
 uvicorn
 google-cloud-bigquery
 pandas-gbq
+great_expectations

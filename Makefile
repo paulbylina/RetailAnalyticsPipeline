@@ -9,26 +9,26 @@ install:
 # ----------------------
 
 create-fact-orders-table:
-	@python src/etl/create_fact_orders_table.py
+	@python -m src.etl.create_fact_orders_table
 
 create-dim-date-table:
-	@python src/etl/create_dim_date_table.py
+	@python -m src.etl.create_dim_date_table
 
 create-dim-customers-table:
-	@python src/etl/create_dim_customers_table.py
+	@python -m src.etl.create_dim_customers_table
 
 # ----------------------
 # Launch full pipeline
 # ----------------------	
 
 full-pipeline:
-	@python src/ingestion/generate_retail_data.py
-	@python src/etl/transform_retail_orders.py
-	@python src/etl/validate_retail_orders.py
-	@python src/etl/aggregate_retail_orders.py
-	@python src/etl/create_fact_orders_table.py
-	@python src/etl/create_dim_date_table.py
-	@python src/etl/create_dim_customers_table.py
+	@python -m src.ingestion.generate_retail_data
+	@python -m src.etl.transform_retail_orders
+	@python -m src.etl.validate_retail_orders
+	@python -m src.etl.aggregate_retail_orders
+	@python -m src.etl.create_fact_orders_table
+	@python -m src.etl.create_dim_date_table
+	@python -m src.etl.create_dim_customers_table
 
 # ----------------------
 # Show all tables in database
@@ -185,7 +185,13 @@ streamlit:
 # ----------------------
 
 pyspark-transform:
-	@python src/etl/transform_retail_orders_pyspark.py
+	@python -m src.etl.transform_retail_orders_pyspark
+
+spark-run:
+	@python -m src.etl.run_spark_fact_orders
+
+test-spark:
+	@pytest tests/test_spark_fact_orders_smoke.py -v
 
 # ----------------------
 # Redpanda
@@ -198,10 +204,10 @@ stream-topic:
 	docker exec -it redpanda rpk topic create retail-orders -p 1
 
 stream-produce:
-	python src/streaming/produce_retail_orders.py
+	@python -m src.streaming.produce_retail_orders
 
 stream-consume:
-	python src/streaming/consume_retail_orders_to_duckdb.py
+	@python -m src.streaming.consume_retail_orders_to_duckdb
 
 test-streaming:
 	pytest tests/test_streaming_events_smoke.py -v

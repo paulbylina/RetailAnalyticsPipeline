@@ -147,14 +147,14 @@ make install
 ## Running the Pipeline
 ### 1. Generate raw retail data
 ```bash
-python src/ingestion/generate_retail_data.py
+python -m src.ingestion.generate_retail_data
 ```
 
 ### 2A. Transform and validate the data
 ```bash
-python src/etl/transform_retail_orders.py
-python src/etl/validate_retail_orders.py
-python src/etl/aggregate_retail_orders.py
+python -m src.etl.transform_retail_orders
+python -m src.etl.validate_retail_orders
+python -m src.etl.aggregate_retail_orders
 ```
 ### 2B. Run the PySpark transform
 ```bash
@@ -163,9 +163,9 @@ make pyspark-transform
 
 ### 3. Build the DuckDB warehouse tables
 ```bash
-python src/etl/create_fact_orders_table.py
-python src/etl/create_dim_date_table.py
-python src/etl/create_dim_customers_table.py
+python -m src.etl.create_fact_orders_table
+python -m src.etl.create_dim_date_table
+python -m src.etl.create_dim_customers_table
 ```
 
 Or with Make:
@@ -292,14 +292,14 @@ export BIGQUERY_DATASET="retail_analytics"
 ```
 
 ### Load fact_orders to BigQuery
-```python
-python src/load/load_fact_orders_to_bigquery.py
+```bash
+python -m src.load.load_fact_orders_to_bigquery
 ```
 This reads the local DuckDB ```fact_orders```table and loads it into BigQuery.
 
 ### Verify the BigQuery table
-```python
-python src/load/verify_fact_orders_in_bigquery.py
+```bash
+python -m src.load.verify_fact_orders_in_bigquery
 ```
 This runs a smoke test against the BigQuery table and checks:
 - row count
@@ -356,12 +356,12 @@ docker exec -it redpanda rpk topic create retail-orders -p 1
 
 ### Produce events
 ```bash
-python src/streaming/produce_retail_orders.py
+python -m src.streaming.produce_retail_orders
 ```
 
 ### Consume events into DuckDB
 ```bash
-python src/streaming/consume_retail_orders_to_duckdb.py
+python -m src.streaming.consume_retail_orders_to_duckdb
 ```
 
 ### Run the streaming smoke test
@@ -383,7 +383,7 @@ This project includes a PySpark transformation path that builds a curated `fact_
 
 #### Run the Spark transformation
 ```bash
-python src/etl/run_spark_fact_orders.py
+python -m src.etl.run_spark_fact_orders
 ```
 This reads data/processed/retail_orders_clean.jsonl and writes curated Parquet output to:
 - data/curated/fact_orders_spark.parquet

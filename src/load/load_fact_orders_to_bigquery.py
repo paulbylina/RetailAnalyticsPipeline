@@ -9,6 +9,8 @@ import pandas as pd
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
 
+from src.common.log_utils import get_logger, log_event
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DUCKDB_PATH = PROJECT_ROOT / "data" / "warehouse" / "retail.duckdb"
@@ -18,6 +20,7 @@ BQ_TABLE = os.getenv("BIGQUERY_TABLE", "fact_orders")
 BQ_LOCATION = os.getenv("BIGQUERY_LOCATION", "US")
 WRITE_DISPOSITION = os.getenv("BIGQUERY_WRITE_DISPOSITION", "WRITE_TRUNCATE")
 
+logger = get_logger(__name__)
 
 def require_env(var_name: str) -> str:
     value = os.getenv(var_name)
@@ -69,10 +72,10 @@ def ensure_bigquery_dataset(
 
     try:
         client.get_dataset(dataset_ref)
-        print(f"Dataset exists: {project_id}.{dataset_id}")
+        log_event(logger, "bigquery_dataset_exists", dataset=f"{project_id}.{dataset_id}")
     except NotFound:
         client.create_dataset(dataset_ref)
-        print(f"Created dataset: {project_id}.{dataset_id}")
+        log_event(logger, "bigquery_dataset_created", dataset=f"{project_id}.{dataset_id}")
 
 
 def load_dataframe_to_bigquery(
@@ -97,7 +100,12 @@ def load_dataframe_to_bigquery(
     load_job.result()
 
     table = client.get_table(destination_table)
-    print(f"Loaded {table.num_rows} rows into {destination_table}")
+    log_event(
+        logger,
+        "bigquery_load_complete",
+        destination_table=destination_table,
+        row_count=table.num_rows,
+    )
 
 
 def main() -> int:
@@ -105,13 +113,13 @@ def main() -> int:
         project_id = require_env("GCP_PROJECT_ID")
         dataset_id = require_env("BIGQUERY_DATASET")
 
-        print(f"Using DuckDB database: {DUCKDB_PATH}")
-        print(f"Reading table: {DUCKDB_TABLE}")
+        log_event(logger, "duckdb_source_selected", duckdb_path=str(DUCKDB_PATH), table=DUCKDB_TABLE)
+        log_event(logger, "duckdb_read_started", table=DUCKDB_TABLE)
 
         ensure_duckdb_table_exists(DUCKDB_PATH, DUCKDB_TABLE)
         df = read_fact_orders_from_duckdb(DUCKDB_PATH, DUCKDB_TABLE)
 
-        print(f"Read {len(df)} rows from DuckDB")
+        log_event(logger, "duckdb_read_complete", table=DUCKDB_TABLE, row_count=len(df))
 
         client = bigquery.Client(project=project_id)
 
@@ -131,11 +139,11 @@ def main() -> int:
             write_disposition=WRITE_DISPOSITION,
         )
 
-        print("BigQuery load completed successfully.")
+        log_event(logger, "bigquery_pipeline_complete", table=BQ_TABLE, dataset=dataset_id, project_id=project_id)
         return 0
 
     except Exception as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
+        logger.error("bigquery_pipeline_failed | error=%s", exc)
         return 1
 
 
