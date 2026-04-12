@@ -1,0 +1,7 @@
+retail_analytics_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: data/warehouse/retail.duckdb
+      threads: 4

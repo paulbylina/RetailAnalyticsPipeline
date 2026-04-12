@@ -4,7 +4,6 @@
 RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates a modern retail data workflow. It generates raw retail data, transforms it with Python/SQL and PySpark, loads curated datasets into DuckDB, orchestrates jobs with Airflow, and serves business insights through a Streamlit dashboard. The project is designed to demonstrate practical data engineering skills including modeling, orchestration, testing, containerization, and analytics delivery.
 
 ## Current Scope
-**Implemented**:
 - Batch pipeline
 - Local warehouse in DuckDB
 - Airflow orchestration
@@ -20,12 +19,11 @@ RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates 
 - PySpark transformation path for curated `fact_orders`
 - Curated Spark Parquet output at `data/curated/fact_orders_spark.parquet`
 - Spark smoke test for curated output
+- dbt warehouse layer targeting DuckDB
+- staging model: `stg_fact_orders`
+- mart model: `customer_order_summary`
+- dbt schema tests for staging and mart models
 
-**Future enhancements**:
-- Streaming ingestion
-- dbt models
-- Expanded data quality checks and observability
-- Kubernetes deployment
 
 ## Tech Stack
 - Python
@@ -462,31 +460,26 @@ Then open:
 http://localhost:8501
 ```
 
+## dbt Warehouse Layer
+This project includes a dbt layer on top of the local DuckDB warehouse.
 
+#### dbt Models
+- **Source:** `fact_orders`
+- **Staging model:** `stg_fact_orders`
+- **Mart model:** `customer_order_summary`
 
+#### dbt Commands
+```bash
+make dbt-debug
+make dbt-run
+make dbt-test
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-## Planned Enhancements
-- dbt-style SQL models
-- more tests
-  - validation tests
-  - SQL smoke tests
-  - dashboard smoke test
-- dashboard filters and richer interactivity
-- cloud deployment
-- See [Databricks / GCP Architecture Mapping](docs/databricks-gcp-mapping.md) for how this project maps to a cloud-native Databricks + GCP stack.
-- Streaming path planned with Redpanda: simulated retail order events -> Redpanda topic -> Python consumer -> DuckDB staging/events table.
+#### What the dbt layer adds
+- source-to-model lineage
+- modular SQL transformations
+- staging and mart separation
+- dbt-native schema tests for null and uniqueness checks
 
 
 ## Dashboard Preview

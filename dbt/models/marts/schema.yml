@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: customer_order_summary
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+      - name: total_orders
+        tests:
+          - not_null
+      - name: total_revenue
+        tests:
+          - not_null

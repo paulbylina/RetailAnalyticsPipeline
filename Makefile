@@ -229,6 +229,19 @@ k8s-port-forward:
 
 
 # ----------------------
+# dbt
+# ----------------------
+dbt-debug:
+	DBT_PROFILES_DIR=dbt dbt debug --project-dir dbt
+
+dbt-run:
+	DBT_PROFILES_DIR=dbt dbt run --project-dir dbt
+
+dbt-test:
+	DBT_PROFILES_DIR=dbt dbt test --project-dir dbt
+
+
+# ----------------------
 # Validation
 # ----------------------
 validate-gx:

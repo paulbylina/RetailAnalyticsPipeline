@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: stg_fact_orders
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+      - name: total_amount
+        tests:
+          - not_null

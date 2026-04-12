@@ -10,3 +10,5 @@ uvicorn
 google-cloud-bigquery
 pandas-gbq
 great_expectations
+dbt-core
+dbt-duckdb
