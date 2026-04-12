@@ -1,7 +1,7 @@
 # *Retail Analytics Pipeline* ![CI](https://github.com/paulbylina/RetailAnalyticsPipeline/actions/workflows/ci.yml/badge.svg)
 
 ## Overview
-RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates a modern retail data workflow. It generates raw retail data, transforms it with Python/SQL and PySpark, loads curated datasets into DuckDB, orchestrates jobs with Airflow, and serves business insights through a Streamlit dashboard. The project is designed to demonstrate practical data engineering skills including modeling, orchestration, testing, containerization, and analytics delivery.
+RetailAnalyticsPipeline is an end-to-end retail data engineering project that demonstrates batch processing, streaming ingestion, cloud loading, warehouse modeling, and analytics delivery. The project includes Python and SQL transformations, a local DuckDB warehouse, an optional BigQuery target, a Redpanda-based streaming pipeline, a PySpark transformation path, a dbt warehouse layer, automated testing, structured logging, and a Streamlit dashboard.
 
 ## Current Scope
 - Batch pipeline
@@ -28,110 +28,110 @@ RetailAnalyticsPipeline is an end-to-end batch analytics project that simulates 
 ## Tech Stack
 - Python
 - SQL
-- Pyspark
+- PySpark
 - DuckDB
+- BigQuery
+- dbt
 - Pandas
 - NumPy
 - Streamlit
 - Altair
 - Pytest
+- Great Expectations
 - Docker
 - Docker Compose
+- Kubernetes
+- Redpanda
 - GitHub Actions
 - Apache Airflow
 - Makefile
 
+
 ## Architecture
-The project follows a layered data engineering workflow:
+The project includes multiple data-engineering paths built around the same retail dataset:
 
-```text
-Raw Data Generation
-        ↓
-Processed / Cleaned Data
-        ↓
-DuckDB Warehouse
-        ├── fact_orders
-        ├── dim_date
-        └── dim_customers
-        ↓
-Analytics SQL Queries
-        ↓
-Streamlit Dashboard
+1. **Batch pipeline**
+   - Generate synthetic retail order data
+   - Transform and validate orders with Python
+   - Load warehouse tables into DuckDB
+   - Serve analytics through Streamlit
 
-Automation / Orchestration
-- GitHub Actions CI for automated test runs
-- GitHub Actions pipeline workflow for scheduled/manual execution
-- Airflow DAG for task orchestration
-- Docker / Docker Compose for containerized local execution
-```
+2. **Cloud warehouse path**
+   - Load `fact_orders` from DuckDB into BigQuery
+   - Verify cloud-side row counts and key metrics
+
+3. **Streaming pipeline**
+   - Publish retail order events with a Python producer
+   - Route events through Redpanda
+   - Consume events into DuckDB with a Python consumer
+
+4. **Spark pipeline**
+   - Transform cleaned retail orders with PySpark
+   - Write curated Parquet output for `fact_orders`
+
+5. **dbt warehouse layer**
+   - Define DuckDB warehouse sources
+   - Build staging and mart models
+   - Run dbt schema tests
+
+6. **Operational layer**
+   - Airflow DAG for orchestration
+   - GitHub Actions for CI
+   - Great Expectations and pytest for validation
+   - Docker for containerization
+   - Kubernetes for local dashboard deployment
+   
 
 ## Project Structure
 ```text
 RetailAnalyticsPipeline/
-├── airflow
-│   └── dags
-│       └── retail_pipeline_dag.py
-├── data
-│   ├── processed
-│   ├── raw
-│   └── warehouse
-├── docs
-│   ├── airflow-dag.png
-│   └── dashboard-screenshot.png
-├── sql
-│   └── analytics
-│       ├── daily_revenue_trend.sql
-│       ├── kpi_summary.sql
-│       ├── orders_by_status.sql
-│       ├── revenue_by_customer_segment.sql
-│       ├── revenue_by_region.sql
-│       ├── revenue_by_weekday.sql
-│       └── top_categories.sql
-├── src
-│   ├── __init__.py
-│   ├── dashboard
-│   │   └── app.py
-│   ├── etl
-│   │   ├── __init__.py
-│   │   ├── aggregate_retail_orders.py
-│   │   ├── create_dim_customers_table.py
-│   │   ├── create_dim_date_table.py
-│   │   ├── create_fact_orders_table.py
-│   │   ├── export_retail_kpis.py
-│   │   ├── query_retail_kpis.py
-│   │   ├── transform_retail_orders.py
-│   │   └── validate_retail_orders.py
-│   ├── ingestion
-│   │   └── generate_retail_data.py
-│   └── run_retail_pipeline.py
-├── tests
-│   ├── etl
-│   │   └── test_transform_retail_orders.py
-│   ├── conftest.py
-│   └── test_warehouse_smoke.py
-├── docker-compose.airflow.yml
+├── airflow/
+│   └── dags/
+├── data/
+│   ├── processed/
+│   ├── curated/
+│   └── warehouse/
+├── dbt/
+│   ├── models/
+│   │   ├── staging/
+│   │   └── marts/
+│   ├── dbt_project.yml
+│   └── profiles.yml
+├── k8s/
+├── src/
+│   ├── common/
+│   ├── etl/
+│   ├── ingestion/
+│   ├── load/
+│   ├── quality/
+│   └── streaming/
+├── tests/
+│   ├── etl/
+│   └── ...
+├── .github/
+│   └── workflows/
+├── Makefile
+├── pytest.ini
 ├── docker-compose.yml
 ├── Dockerfile
-├── Makefile
-├── README.md
-└── requirements.txt
+└── README.md
 ```
-* Generated pipeline outputs are written to the `data/raw`, `data/processed`, and `data/warehouse` directories when the pipeline runs.
+
 
 ## How to Run
-### 1. Clone the repository
+#### 1. Clone the repository
 ```bash
 git clone https://github.com/paulbylina/RetailAnalyticsPipeline.git
 cd RetailAnalyticsPipeline
 ```
 
-### 2. Create and activate a virtual environment
+#### 2. Create and activate a virtual environment
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Install dependencies
+#### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
@@ -143,23 +143,23 @@ make install
 ```
 
 ## Running the Pipeline
-### 1. Generate raw retail data
+#### 1. Generate raw retail data
 ```bash
 python -m src.ingestion.generate_retail_data
 ```
 
-### 2A. Transform and validate the data
+#### 2a. Transform and validate the data
 ```bash
 python -m src.etl.transform_retail_orders
 python -m src.etl.validate_retail_orders
 python -m src.etl.aggregate_retail_orders
 ```
-### 2B. Run the PySpark transform
+#### 2b. Run the PySpark transform
 ```bash
 make pyspark-transform
 ```
 
-### 3. Build the DuckDB warehouse tables
+#### 3. Build the DuckDB warehouse tables
 ```bash
 python -m src.etl.create_fact_orders_table
 python -m src.etl.create_dim_date_table
